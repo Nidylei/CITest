@@ -20,8 +20,13 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 	[xml]$xml = Get-Content "$newConfigFile"
 
 
-	# Update Distro
-	# $deploymentData = $xml.config.Azure.Deployment.Data
+	# Update vmName
+	$vmName = $xml.config.VMs.vm.vmName
+	"The vm name is $vmName before change"
+	
+	$xml.config.VMs.vm.vmName = $env:VMName
+	
+	
 	# $deploymentData.Distro[0].Name = $env:DistroName
 	# $deploymentData.Distro[0].OsImage = $env:DistroOsImage
 	# if($env:DistroOsVHD)
@@ -76,7 +81,7 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 		# }
 	# }
 
-	# $xml.Save("$newConfigFile")
+	$xml.Save("$newConfigFile")
 }
 
 
@@ -111,12 +116,11 @@ $XmlConfigFile = $env:XmlConfigFile
 if ($XmlConfigFile -and (Test-Path "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile"))
 {
 	CIUpdateConfig "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\$os_on_host\lisa" run.xml 
+	
 }
 else
 {
 	#TODO
-	"To do here"
-	CIUpdateConfig "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\$os_on_host\lisa" run.xml 
 }
 
 

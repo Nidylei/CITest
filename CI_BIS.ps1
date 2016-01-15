@@ -20,11 +20,17 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 	[xml]$xml = Get-Content "$newConfigFile"
 
 
-	# Update vmName
+	
 	$vmName = $xml.config.VMs.vm.vmName
 	"The vm name is $vmName before change"
+	$TestSuite = $xml.config.VMs.vm.suite
+	"The test suite is $suite before change"
 	
+	# Update vmName
 	$xml.config.VMs.vm.vmName = $env:VMName
+	
+	# Update test suite
+	$xml.config.VMs.vm.suite = $env:TestSuite
 	
 	
 	# $deploymentData.Distro[0].Name = $env:DistroName

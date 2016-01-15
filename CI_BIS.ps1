@@ -1,41 +1,4 @@
 
-"Prepare the xml for test"
-
-#TODO: WS2012R2? WS2008R2?
-$os_on_host = "WS2012R2"
-
-# Copy certificate
-# New-Item  -ItemType "Directory" BIS\WS2012R2\lisa\ssh
-# Copy-Item CI\ssh\*   BIS\WS2012R2\lisa\ssh
-
-New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\ssh
-Copy-Item CI\ssh\*   BIS\$os_on_host\lisa\ssh
-
-# Copy tools
-# New-Item  -ItemType "Directory" BIS\WS2012R2\lisa\bin
-# Copy-Item CI\tools\*   BIS\WS2012R2\lisa\bin
-
-New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\bin
-Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
-
-
-"PWD is $pwd -------------------"
-
-# Update config for CI Run
-$XmlConfigFile = $env:XmlConfigFile
-if ($XmlConfigFile -and (Test-Path "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile"))
-{
-	CIUpdateConfig "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\WS2008R2\lisa" run.xml 
-}
-else
-{
-	#TODO
-	"To do here"
-	CIUpdateConfig "\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile" "\BIS\WS2008R2\lisa" run.xml 
-}
-
-
-
 
 
 <#
@@ -113,8 +76,48 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 		# }
 	# }
 
-	$xml.Save("$newConfigFile")
+	# $xml.Save("$newConfigFile")
 }
+
+
+
+
+
+"Prepare the xml for test"
+
+#TODO: WS2012R2? WS2008R2?
+$os_on_host = "WS2012R2"
+
+# Copy certificate
+# New-Item  -ItemType "Directory" BIS\WS2012R2\lisa\ssh
+# Copy-Item CI\ssh\*   BIS\WS2012R2\lisa\ssh
+
+New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\ssh
+Copy-Item CI\ssh\*   BIS\$os_on_host\lisa\ssh
+
+# Copy tools
+# New-Item  -ItemType "Directory" BIS\WS2012R2\lisa\bin
+# Copy-Item CI\tools\*   BIS\WS2012R2\lisa\bin
+
+New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\bin
+Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
+
+
+"PWD is $pwd -------------------"
+
+# Update config for CI Run
+$XmlConfigFile = $env:XmlConfigFile
+if ($XmlConfigFile -and (Test-Path "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile"))
+{
+	CIUpdateConfig "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\WS2008R2\lisa" run.xml 
+}
+else
+{
+	#TODO
+	"To do here"
+	CIUpdateConfig "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\WS2008R2\lisa" run.xml 
+}
+
 
 
 

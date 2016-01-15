@@ -86,7 +86,8 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 "Prepare the xml for test"
 
 #TODO: WS2012R2? WS2008R2?
-$os_on_host = "WS2012R2"
+$os_on_host = $env:HostOS
+# $os_on_host = "WS2012R2"
 
 # Copy certificate
 # New-Item  -ItemType "Directory" BIS\WS2012R2\lisa\ssh
@@ -107,15 +108,15 @@ Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
 
 # Update config for CI Run
 $XmlConfigFile = $env:XmlConfigFile
-if ($XmlConfigFile -and (Test-Path "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile"))
+if ($XmlConfigFile -and (Test-Path "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile"))
 {
-	CIUpdateConfig "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\WS2008R2\lisa" run.xml 
+	CIUpdateConfig "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\$os_on_host\lisa" run.xml 
 }
 else
 {
 	#TODO
 	"To do here"
-	CIUpdateConfig "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\WS2008R2\lisa" run.xml 
+	CIUpdateConfig "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\$os_on_host\lisa" run.xml 
 }
 
 

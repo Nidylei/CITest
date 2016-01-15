@@ -19,6 +19,8 @@ New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\bin
 Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
 
 
+"PWD is $pwd -------------------"
+
 # Update config for CI Run
 $XmlConfigFile = $env:XmlConfigFile
 if ($XmlConfigFile -and (Test-Path "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile"))
@@ -28,6 +30,8 @@ if ($XmlConfigFile -and (Test-Path "$pwd\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfi
 else
 {
 	#TODO
+	"To do here"
+	CIUpdateConfig "\BIS\WS2012R2\lisa\xml\freebsd\$XmlConfigFile" "\BIS\WS2008R2\lisa" run.xml 
 }
 
 

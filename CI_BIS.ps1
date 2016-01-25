@@ -105,15 +105,16 @@ function GetIPv4([String] $vmName, [String] $server)
     .Example
         GetIPv4 $testVMName $serverName
     #>
-
+"Begin to get ipv4"
     $errMsg = $null
     $addr = GetIPv4ViaKVP $vmName $server
     if (-not $addr)
     {
 		#TODO?
 		"Warning: Cannot get ipv4 from kvp."
+		"Add is $ $addr *********************"
     }
-
+	
     return $addr
 }
 
@@ -172,6 +173,7 @@ Description:
 # Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]$newConfigFileName, [string]$runfileName)
 Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]$newConfigFileName)
 {
+
 	# $runfile = "$CIFolder\$runfileName"
 	$newConfigFile = "$CIFolder\$newConfigFileName"
     
@@ -195,7 +197,7 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 	$xml.config.VMs.vm.suite = $env:TestSuite
 	
 	$server = "localhost"
-	$ipv4_addr = GetIPv4 $vmName $server
+	$ipv4_addr = GetIPv4 $env:VMName $server
 	
 	# Update vmName
 	$xml.config.VMs.vm.ipv4 = [string]$ipv4_addr
@@ -267,19 +269,14 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 
 #TODO: WS2012R2? WS2008R2?
 $os_on_host = $env:HostOS
-# $os_on_host = "WS2012R2"  #Just for test
+$os_on_host = "WS2012R2"  #Just for test
 
 # Copy certificate
-# New-Item  -ItemType "Directory" BIS\WS2012R2\lisa\ssh
-# Copy-Item CI\ssh\*   BIS\WS2012R2\lisa\ssh
 
 New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\ssh
 Copy-Item CI\ssh\*   BIS\$os_on_host\lisa\ssh
 
 # Copy tools
-# New-Item  -ItemType "Directory" BIS\WS2012R2\lisa\bin
-# Copy-Item CI\tools\*   BIS\WS2012R2\lisa\bin
-
 New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\bin
 Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
 
@@ -287,12 +284,12 @@ Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
 "PWD is $pwd -------------------"
 
 $server = "localhost"
-# $env:VMName="FreeBSD64xhx"  #Just for test
+$env:VMName="FreeBSD64xhx"  #Just for test
 DoStartVM $env:VMName $server
 
 # $ipaddr=GetIPv4 $env:VMName $server
 # "IP is $ipaddr"
-"******************************"
+# "******************************"
 
 
 
@@ -306,6 +303,7 @@ if ($XmlConfigFile -and (Test-Path "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlCo
 else
 {
 	#TODO
+	CIUpdateConfig "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\$os_on_host\lisa" run.xml   #Just for test
 }
 
 

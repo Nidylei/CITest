@@ -198,8 +198,8 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 	$ipv4_addr = GetIPv4 $vmName $server
 	
 	# Update vmName
-	$xml.config.VMs.vm.ipv4 = $ipv4_addr
-	
+	$xml.config.VMs.vm.ipv4 = [string]$ipv4_addr
+
 	#GetIPv4  in utilFunctions.ps1
 	
 	# $deploymentData.Distro[0].Name = $env:DistroName

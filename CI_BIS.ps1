@@ -1,10 +1,5 @@
 
 
-#######################################################################
-#
-# GetIPv4ViaKVP()
-#
-#######################################################################
 function GetIPv4ViaKVP( [String] $vmName, [String] $server)
 {
     <#
@@ -17,8 +12,6 @@ function GetIPv4ViaKVP( [String] $vmName, [String] $server)
         Name of the VM to retrieve the IP address from.
     .Parameter server
         Name of the server hosting the VM
-    .Example
-        GetIpv4ViaKVP $testVMName $serverName
     #>
 
     $vmObj = Get-WmiObject -Namespace root\virtualization\v2 -Query "Select * From Msvm_ComputerSystem Where ElementName=`'$vmName`'" -ComputerName $server
@@ -83,11 +76,6 @@ function GetIPv4ViaKVP( [String] $vmName, [String] $server)
 
 
 
-#######################################################################
-#
-# GetIPv4()
-#
-#######################################################################
 function GetIPv4([String] $vmName, [String] $server)
 {
     <#
@@ -99,15 +87,13 @@ function GetIPv4([String] $vmName, [String] $server)
         Name of the VM to retrieve the IP address from.
     .Parameter server
         Name of the server hosting the VM
-    .Example
-        GetIPv4 $testVMName $serverName
     #>
+	
     $errMsg = $null
     $addr = GetIPv4ViaKVP $vmName $server
     if (-not $addr)
     {
 		#TODO
-		"Warning: Cannot get ipv4 from kvp."
     }
 	
     return $addr
@@ -116,22 +102,30 @@ function GetIPv4([String] $vmName, [String] $server)
 
 function DoStartVM([String] $vmName, [String] $server)
 {
-    # Check the VM is whether in the running state
+    <#
+    .Description
+        To start a vm and wait it boot completely if the vm is existed
+    .Parameter vmName
+        Name of the VM to start
+    .Parameter server
+        Name of the server hosting the VM
+    #>
+	
     $v = Get-VM $vmName -ComputerName $server 2>null
-    # $v = Get-VM $vmName -ComputerName $server  
 	if( -not $v  )
 	{
 		Write-Error "Error: the vm $vmName doesn't exist!"
 		return 1
 	}
 	
+	# Check the VM is whether in the running state
     $hvState = $v.State
     if ($hvState -eq "Running")
     {
 		return 0
     }
 
-    # Start the VM and wait for the Hyper-V state to go to Running
+    # Start the VM and wait for the Hyper-V to be running
     Start-VM $vmName -ComputerName $server | out-null
     
     $timeout = 180
@@ -164,27 +158,22 @@ function DoStartVM([String] $vmName, [String] $server)
 	return 0
 }
 
-<#
-Usage:
-	CIUpdateConfig $originalConfigFile $CIFolder $newConfigFileName
-Description:
-	This is a function to update cloud configuration for CI job.
-#>
+
 Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]$newConfigFileName)
 {
+	<#
+	Usage:
+		CIUpdateConfig $originalConfigFile $CIFolder $newConfigFileName
+	Description:
+		This is a function to update cloud configuration for CI job.
+	#>
+	
 	$newConfigFile = "$CIFolder\$newConfigFileName"
     
     # The $newConfigFileName is a copy of $originalConfigFile. All changes will be written into the $newConfigFileName
     Copy-Item $originalConfigFile $newConfigFile
 
 	[xml]$xml = Get-Content "$newConfigFile"
-
-
-	$vmName = $xml.config.VMs.vm.vmName
-	"The vm name is $vmName before change"
-	$TestSuite = $xml.config.VMs.vm.suite
-	"The test suite is $suite before change"
-	"--------------------------------------------------"
 	
 	# Update vmName
 	$xml.config.VMs.vm.vmName = $env:VMName
@@ -196,41 +185,22 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 	$server = "localhost"
 	$xml.config.VMs.vm.hvServer = $server
 	
-	# Update ipv4
+	# Update ipv4 address
 	$ipv4_addr = GetIPv4 $env:VMName $server
 	$xml.config.VMs.vm.ipv4 = [string]$ipv4_addr
 
-
-
-
-	# "--------------------------just for test-------------------------------"
-	# $newConfigFile = "D:\CI\workspace\CI.BIS2012R2Test\BIS\WS2012R2\lisa\run.xml"
-	# [xml]$xml = Get-Content "D:\CI\workspace\CI.BIS2012R2Test\BIS\WS2012R2\lisa\run.xml"
-	
-	# if(1)
 	if($env:DebugCases -and $env:DebugCases.Trim() -ne "")
 	{
 		$debugCycle = $xml.SelectSingleNode("/config/testSuites/suite[suiteName=`"debug`"]")
 		if($debugCycle)
 		{
-		
-			foreach($testcase in $debugCycle.suiteTests.suiteTest)  #Just for test
-			{
-				"Test cases are $testcase"
-			}
-			
 			foreach($testcase in $debugCycle.suiteTests)
 			{
 				$testcase = $debugCycle.RemoveChild($testcase)
 			}
-			
-			# $RemoveList = $xml.config.testSuites.suite | Where-Object {$_.suiteName -eq "debug2"}
-			# $xml.config.testSuites.RemoveChild($RemoveList)
-
 		}
 		else
 		{
-		    # "Run here ....1..."
 			$debugCycle = $xml.CreateElement("suite")
 			$name = $xml.CreateElement("suiteName")
 			$name.InnerText = "DEBUGxhx"
@@ -238,15 +208,9 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 			$debugCycle = $xml.DocumentElement.testSuites.AppendChild($debugCycle)
 		}
 		
-	
-		# $DebugCases = "testcase1,testcase2,testcase3,CheckMemoryCapacity-5GB,4K_AddDynamicVHDX_SCSIDrive_Multi"
-		# $DebugCases = "testcase1,testcase2,testcase3"
-		
 		$debugCase = $xml.CreateElement("suiteTests")
 		foreach($cn in ($env:DebugCases).Trim().Split(","))
 		{
-			 # "Run here ....2..."
-		
 			$debugCaseName = $xml.CreateElement("suiteTest")
 			$debugCaseName.InnerText = $cn.Trim()
 			$debugCaseName = $debugCase.AppendChild($debugCaseName)
@@ -261,12 +225,11 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 
 
 
-"Prepare the xml for test"
-
-$os_on_host = $env:HostOS
-# $os_on_host = "WS2012R2"  #Just for test
+"Begin to prepare the xml for test"
+"-------------------------------------------------"
 
 # Copy certificate
+$os_on_host = $env:HostOS
 $sshDir = "$pwd" +"\BIS\$os_on_host\lisa\ssh"
 $status = Test-Path $sshDir  
 if( $status -ne "True" )
@@ -285,22 +248,12 @@ if( $status -ne "True" )
 Copy-Item CI\tools\*   $binDir
 
 
-# "PWD is $pwd -------------------"   #Just for test
-
-# $env:VMName="FreeBSD64xhx2"  #Just for test
-"The vm name is $env:VMName"
+"The vm name is:  $env:VMName"
 $sts = DoStartVM $env:VMName "localhost"
 if($sts[-1] -ne 0)
 {
 	return 1
 }
-
-
-#Just for test
-# $ipaddr=GetIPv4 $env:VMName $server
-# "IP is $ipaddr"
-# "******************************"
-
 
 
 # Update config for CI Run
@@ -313,17 +266,14 @@ if ($XmlConfigFile -and (Test-Path "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlCo
 else
 {
 	#TODO
-	# CIUpdateConfig "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\$os_on_host\lisa" run.xml   #Just for test
 }
 
 
-
-
-
-
-
-
-
-
-
 "Prepare the xml for test done"
+"-------------------------------------------------"
+
+
+
+
+
+

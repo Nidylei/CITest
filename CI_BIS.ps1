@@ -116,14 +116,18 @@ function GetIPv4([String] $vmName, [String] $server)
 
 function DoStartVM([String] $vmName, [String] $server)
 {
-    "VM name is $vmName."
-	"**************"
     # Check the VM is whether in the running state
-    $v = Get-VM $vmName -ComputerName $server
+    $v = Get-VM $vmName -ComputerName $server 2>null
+    # $v = Get-VM $vmName -ComputerName $server  
+	if( -not $v  )
+	{
+		"Error: the vm $vmName doesn't exist!"
+		return 1
+	}
+	
     $hvState = $v.State
     if ($hvState -eq "Running")
     {
-		"The vm $vmName is in running."
 		return 0
     }
 
@@ -148,6 +152,7 @@ function DoStartVM([String] $vmName, [String] $server)
     if ($timeout -eq 0)
     {
 		"Error:failed to start the vm $vmName"
+		return 1
     }
     else
     {
@@ -156,7 +161,7 @@ function DoStartVM([String] $vmName, [String] $server)
 		"Start vm $vmName successfully."
     }
 
-
+	return 0
 }
 
 <#
@@ -272,8 +277,17 @@ Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
 
 "PWD is $pwd -------------------"   #Just for test
 
-# $env:VMName="FreeBSD64xhx"  #Just for test
-DoStartVM $env:VMName "localhost"
+$env:VMName="FreeBSD64xhx2"  #Just for test
+$sts = DoStartVM $env:VMName "localhost"
+if($sts[-1] -ne 0)
+{
+	return 1
+}
+else
+{
+	"Start vm OK"
+	return 0
+}
 
 #Just for test
 # $ipaddr=GetIPv4 $env:VMName $server

@@ -238,7 +238,7 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 		# $DebugCases = "testcase1,testcase2,testcase3"
 		
 		$debugCase = $xml.CreateElement("suiteTests")
-		foreach($cn in ($DebugCases).Trim().Split(","))
+		foreach($cn in ($env:DebugCases).Trim().Split(","))
 		{
 			 # "Run here ....2..."
 		

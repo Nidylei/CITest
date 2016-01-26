@@ -267,17 +267,28 @@ $os_on_host = $env:HostOS
 # $os_on_host = "WS2012R2"  #Just for test
 
 # Copy certificate
-New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\ssh
-Copy-Item CI\ssh\*   BIS\$os_on_host\lisa\ssh
+$Dir = BIS\$os_on_host\lisa\ssh
+$status = Test-Path $Dir  
+if( $status -ne "False" )
+{
+	New-Item  -ItemType "Directory" $Dir
+}
+Copy-Item CI\ssh\*   $Dir
 
 # Copy tools
-New-Item  -ItemType "Directory" BIS\$os_on_host\lisa\bin
-Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
+$Dir = BIS\$os_on_host\lisa\bin
+$status = Test-Path $Dir  
+if( $status -ne "False" )
+{
+	New-Item  -ItemType "Directory" $Dir
+}
+Copy-Item CI\tools\*   $Dir
 
 
-"PWD is $pwd -------------------"   #Just for test
+# "PWD is $pwd -------------------"   #Just for test
 
 # $env:VMName="FreeBSD64xhx2"  #Just for test
+"The vm name is $env:VMName"
 $sts = DoStartVM $env:VMName "localhost"
 if($sts[-1] -ne 0)
 {

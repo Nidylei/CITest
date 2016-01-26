@@ -121,7 +121,7 @@ function DoStartVM([String] $vmName, [String] $server)
     # $v = Get-VM $vmName -ComputerName $server  
 	if( -not $v  )
 	{
-		"Error: the vm $vmName doesn't exist!"
+		Write-Error "Error: the vm $vmName doesn't exist!"
 		return 1
 	}
 	
@@ -151,14 +151,14 @@ function DoStartVM([String] $vmName, [String] $server)
     # Check if we timed out waiting to reach the Hyper-V Running state
     if ($timeout -eq 0)
     {
-		"Error:failed to start the vm $vmName"
+		Write-Error "Error:failed to start the vm $vmName"
 		return 1
     }
     else
     {
-		"Go to sleep 60 to wait the vm boot successfully"
+		Write-Output "Go to sleep 60 to wait the vm boot successfully"
 		sleep 60
-		"Start vm $vmName successfully."
+		Write-Output "Start vm $vmName successfully."
     }
 
 	return 0
@@ -277,17 +277,13 @@ Copy-Item CI\tools\*   BIS\$os_on_host\lisa\bin
 
 "PWD is $pwd -------------------"   #Just for test
 
-$env:VMName="FreeBSD64xhx2"  #Just for test
+# $env:VMName="FreeBSD64xhx2"  #Just for test
 $sts = DoStartVM $env:VMName "localhost"
 if($sts[-1] -ne 0)
 {
 	return 1
 }
-else
-{
-	"Start vm OK"
-	return 0
-}
+
 
 #Just for test
 # $ipaddr=GetIPv4 $env:VMName $server

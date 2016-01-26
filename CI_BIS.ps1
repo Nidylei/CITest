@@ -267,7 +267,7 @@ $os_on_host = $env:HostOS
 # $os_on_host = "WS2012R2"  #Just for test
 
 # Copy certificate
-$Dir = BIS\$os_on_host\lisa\ssh
+$Dir = $pwd +"\BIS\$os_on_host\lisa\ssh"
 $status = Test-Path $Dir  
 if( $status -ne "False" )
 {
@@ -276,7 +276,7 @@ if( $status -ne "False" )
 Copy-Item CI\ssh\*   $Dir
 
 # Copy tools
-$Dir = BIS\$os_on_host\lisa\bin
+$Dir = $pwd + "\BIS\$os_on_host\lisa\bin"
 $status = Test-Path $Dir  
 if( $status -ne "False" )
 {

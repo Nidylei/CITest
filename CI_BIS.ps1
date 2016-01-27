@@ -224,9 +224,9 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 
 
 
-
-"Begin to prepare the xml for test"
 "-------------------------------------------------"
+"Begin to prepare the xml for test"
+
 
 # Copy certificate
 $os_on_host = $env:HostOS
@@ -249,6 +249,7 @@ Copy-Item CI\tools\*   $binDir
 
 
 "The vm name is:  $env:VMName"
+"Now, it begins to start the $env:VMName vm and please wait for a moment..."
 $sts = DoStartVM $env:VMName "localhost"
 if($sts[-1] -ne 0)
 {
@@ -271,6 +272,12 @@ else
 
 "Prepare the xml for test done"
 "-------------------------------------------------"
+cd .\BIS\$os_on_host\lisa
+.\lisa run run.xml
+
+
+
+
 
 
 

@@ -208,6 +208,8 @@ else
 "Prepare the xml for test done"
 "-------------------------------------------------"
 
+$remoteDir = "/usr"
+$logFile = "autobuildtestv1.log"
 if( $env:BuildWorld -eq $True )
 {
 

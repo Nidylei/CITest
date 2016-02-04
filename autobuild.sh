@@ -57,6 +57,7 @@ while( $i <= $#argv )
     @ i = $i + 1
 end
 
+cat /tmp/tempLogForAutoBuild.log > $LogFile
 
 #A directory to store the source code from URL
 if( ! -e $srcPath ) then
@@ -133,8 +134,9 @@ if( $buildworldFlag == "yes" ) then
     echo "Install world successfully."  >> $logFile
 endif
 
-
-echo "Reboot VM after syncing, building and installing kernel [world] successfully."  >>  $logFile
+echo "To reboot VM after syncing, building and installing kernel/world."  >>  $logFile
+date >> $logFile
+sync
 reboot
 
 

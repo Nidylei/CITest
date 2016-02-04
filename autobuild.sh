@@ -46,7 +46,7 @@ while( $i <= $#argv )
             echo "Error: Please give a log file name" | tee -a "/tmp/tempLogForAutoBuild.log"
             exit 1
         else
-            set LogFile  = $argv[$i] 
+            set logFile  = $argv[$i] 
         endif
     endif
 	
@@ -57,7 +57,7 @@ while( $i <= $#argv )
     @ i = $i + 1
 end
 
-cat /tmp/tempLogForAutoBuild.log > $LogFile
+cat /tmp/tempLogForAutoBuild.log > $logFile
 
 #A directory to store the source code from URL
 if( ! -e $srcPath ) then

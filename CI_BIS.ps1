@@ -209,7 +209,7 @@ else
 "-------------------------------------------------"
 
 $remoteDir = "/usr"
-$logFile = "autobuildtestv1.log"
+$logFile = "autobuild.log"
 if( $env:BuildWorld -eq $True )
 {
 
@@ -217,7 +217,7 @@ if( $env:BuildWorld -eq $True )
 # ./autobuild.sh --buildworld  --srcURL $env:SoureCodeURL 
 
 	# ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuildtest.sh" $remoteDir  "CI" " --buildworld --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
-	ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
+	ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "36000"
 
 }
 elseif( $env:BuildKernel -eq $True )

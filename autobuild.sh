@@ -60,10 +60,10 @@ end
 cat /tmp/tempLogForAutoBuild.log > $logFile
 
 #A directory to store the source code from URL
-if( ! -e $srcPath ) then
-    mkdir -p $srcPath
+if( -e $srcPath ) then
+    rm -rf $srcPath
 endif
-
+mkdir -p $srcPath
 
 #Get the source code from the URL
 echo "The source code URL is: $sourceCodeURL"   >> $logFile

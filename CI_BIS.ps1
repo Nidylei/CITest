@@ -219,7 +219,6 @@ if( $env:BuildWorld -eq $True )
 	# ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuildtest.sh" $remoteDir  "CI" " --buildworld --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
 	ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
 
-
 }
 elseif( $env:BuildKernel -eq $True )
 {
@@ -228,16 +227,17 @@ elseif( $env:BuildKernel -eq $True )
 	# ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuildtest.sh" $remoteDir  "CI" " --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
 	ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
 
-
 }
 
 
 
 
-
-# cd .\BIS\$os_on_host\lisa
-# .\lisa run run.xml
-
+"-------------------------------------------------"
+"Ready to run test cases"
+cd .\BIS\$os_on_host\lisa
+.\lisa run run.xml
+"Run test cases done"
+"-------------------------------------------------"
 
 
 

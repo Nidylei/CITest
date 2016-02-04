@@ -72,6 +72,9 @@ if( $? != 0 ) then
 	echo "Error: svn checkout $sourceCodeURL failed."  >> $logFile
 	exit 1
 endif 
+date >> $logFile
+echo "svn checkout $sourceCodeURL successfully."  >> $logFile
+
 
 #The local working copy can be updated by running:
 cd  $srcPath
@@ -83,6 +86,7 @@ endif
 
 #Build world if necessary 
 if( $buildworldFlag == "yes" ) then
+    date >> $logFile
     echo "Begin to build world and it will take a very long time."  >> $logFile
     make -j4 buildworld
 	if( $? != 0 ) then
@@ -90,6 +94,7 @@ if( $buildworldFlag == "yes" ) then
 	    exit 1
     endif 
 	echo "Build world successfully."  >> $logFile
+	date >> $logFile
 endif
 
 #Build kernel  

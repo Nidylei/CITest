@@ -485,7 +485,7 @@ function WaitVMBootFinish([System.Xml.XmlElement] $vm)
 
 
 #Create a snapshot(checkpoint) 
-function CreateSnapshot([String]$vmName, [String]$hvServer, [String]snapshotName)
+function CreateSnapshot([String] $vmName, [String] $hvServer, [String] $snapshotName)
 {
 	#To create a snapshot named ICABase
 	checkpoint-vm -Name $vmName -Snapshotname  $snapshotName -ComputerName $hvServer  -Confirm:$False
@@ -503,7 +503,7 @@ function CreateSnapshot([String]$vmName, [String]$hvServer, [String]snapshotName
 }
 
 #Delete all snapshots(checkpoints) on VM
-function DeleteSnapshot([String]$vmName, [String]$hvServer)
+function DeleteSnapshot([String] $vmName, [String] $hvServer)
 {
 	LogMsg 3 "Info : Get state of $vmName before delete snapshot"
 	$v = Get-VM  -Name $vmName -ComputerName $hvServer

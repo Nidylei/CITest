@@ -484,7 +484,82 @@ function WaitVMBootFinish([System.Xml.XmlElement] $vm)
 }
 
 
+#Create a snapshot(checkpoint) 
+function CreateSnapshot([String]$vmName, [String]$hvServer, [String]snapshotName)
+{
+	#To create a snapshot named ICABase
+	checkpoint-vm -Name $vmName -Snapshotname  $snapshotName -ComputerName $hvServer  -Confirm:$False
+	if ($? -eq "True")
+    {
+		LogMsg 3 "Info: create snapshot $snapshotName on $vmName VM successfully"
+    }
+    else
+    {
+		LogMsg 0 "Error: create snapshot $snapshotName on $vmName VM failed"
+        return 1
+    }
 
+	return 0
+}
+
+#Delete all snapshots(checkpoints) on VM
+function DeleteSnapshot([String]$vmName, [String]$hvServer)
+{
+	LogMsg 3 "Info : Get state of $vmName before delete snapshot"
+	$v = Get-VM  -Name $vmName -ComputerName $hvServer
+    if ($v -eq $null)
+    {
+        LogMsg 0 "Error: VM cannot find the VM $vmName on $hvServer server"
+        return 1
+    } 
+	
+    # If the VM is not stopped, try to stop it
+    if ($v.State -ne "Off")
+    {
+        LogMsg 3 "Info : $vmName is not in a stopped state - stopping VM"
+        Stop-VM -Name $vmName -ComputerName $hvServer -force | out-null
+
+        $v = Get-VM $vmName -ComputerName $hvServer
+        if ($v.State -ne "Off")     
+        {
+            LogMsg 0 "Error: ResetVM is unable to stop $vmName has been disabled"
+            return 1
+        }
+    }
+	
+	
+	#delete snapshot
+	LogMsg 3 "Info : $vmName to delete snapshot"
+	$sts = Remove-VMSnapshot  $vmName -ComputerName $hvServer
+	if( $sts -eq "False" )
+	{
+	     LogMsg 0 "Error: delete snapshot of $vmName on $hvServer server  failed"
+		 return 1
+	}
+	
+	#Make sure delete snapshot successfully
+	LogMsg 3 "Info : Make sure delete snapshot successfully on $vmName"
+	$timeout = 30
+	do
+	{
+	    sleep 1
+	    $snap = Get-VMSnapshot $vmName -ComputerName $hvServer
+		$timeout -= 1
+	}while( $snap.name -and ( $timeout -gt 0 ) )
+	
+	if( $timeout -le 0 )
+	{
+	     LogMsg 0 "Error: delete snapshot of $vmName on $hvServer server failed"
+		 return 1
+	}
+	else
+	{
+		 LogMsg 3 "Info: delete snapshot of $vmName on $hvServer server successfully"
+	}
+	
+	
+    return 0
+}
 
 
 

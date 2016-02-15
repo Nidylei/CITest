@@ -208,6 +208,10 @@ else
 "Prepare the xml for test done"
 "-------------------------------------------------"
 
+#Delete the snapshort before build world/kernel
+DeleteSnapshot $env:VMName "localhost"
+
+#Begin to build and install kernel/world if necessary
 $remoteDir = "/usr"
 $logFile = "autobuild.log"
 if( $env:BuildWorld -eq $True )
@@ -229,7 +233,8 @@ elseif( $env:BuildKernel -eq $True )
 
 }
 
-
+#Create a snapshort named "ICABase"
+CreateSnapshot $env:VMName "localhost"  "ICABase"
 
 
 "-------------------------------------------------"

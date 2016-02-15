@@ -215,23 +215,27 @@ if($sts[-1] -ne 0)
 #Begin to build and install kernel/world if necessary
 $remoteDir = "/usr"
 $logFile = "autobuild.log"
-$sts = "0"
 if( $env:BuildWorld -eq $True )
 {
 	$sts=ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "36000"
+	if($sts[-1] -ne 0)
+	{
+		"Build & install world failed"
+		return 1
+	}
 }
 elseif( $env:BuildKernel -eq $True )
 {
 	$sts=ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
+	if($sts[-1] -ne 0)
+	{
+		"Build & install kernel failed"
+		return 1
+	}
 }
 
-if($sts[-1] -ne 0)
-{
-    "Build or install kernel/world failed"
-	return 1
-}
 
-#Create a snapshort named "ICABase"
+#Create a snapshort named "ICABase" before test cases
 $sts=CreateSnapshot $env:VMName "localhost"  "ICABase"
 if($sts[-1] -ne 0)
 {

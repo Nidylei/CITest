@@ -194,7 +194,6 @@ $XmlConfigFile = $env:XmlConfigFile
 if ($XmlConfigFile -and (Test-Path "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile"))
 {
 	CIUpdateConfig "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\$os_on_host\lisa" run.xml 
-	
 }
 else
 {
@@ -207,29 +206,43 @@ else
 "-------------------------------------------------"
 
 #Delete the snapshort before build world/kernel
-DeleteSnapshot $env:VMName "localhost"
+$sts = DeleteSnapshot $env:VMName "localhost"
+if($sts[-1] -ne 0)
+{
+	return 1
+}
 
 #Begin to build and install kernel/world if necessary
 $remoteDir = "/usr"
 $logFile = "autobuild.log"
+$sts = "0"
 if( $env:BuildWorld -eq $True )
 {
-	ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "36000"
+	$sts=ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "36000"
 }
 elseif( $env:BuildKernel -eq $True )
 {
-	ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
+	$sts=ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
+}
+
+if($sts[-1] -ne 0)
+{
+    "Build or install kernel/world failed"
+	return 1
 }
 
 #Create a snapshort named "ICABase"
-CreateSnapshot $env:VMName "localhost"  "ICABase"
+$sts=CreateSnapshot $env:VMName "localhost"  "ICABase"
+if($sts[-1] -ne 0)
+{
+	return 1
+}
 
-
-"-------------------------------------------------"
+#Now, everything is OK and begins to run the test cases
 "Ready to run test cases"
 cd .\BIS\$os_on_host\lisa
 .\lisa run run.xml
 "Run test cases done"
-"-------------------------------------------------"
+
 
 

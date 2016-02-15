@@ -1,7 +1,6 @@
 . .\CI\CI_Utils.ps1  | out-null
 
 
-
 <#
 $xml: xml file path
 $scriptFile: The file will be executed on VM
@@ -16,7 +15,6 @@ Example:
 $remoteDir = "/tmp"
 $logFile = "autobuild.log"
 ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuildtest.sh" $remoteDir  "CI" " --buildworld --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
-
 #>
 Function ExecuteScriptFromLocalToVmAndCheckResult ( [String]$xml,[String]$scriptFile,[String]$remoteDir,[String]$toolsParentDir,[String]$scriptFilePara,[String]$logFileOnVM,[String]$logFileDirOnLocal,[String]$timeout)
 {
@@ -162,7 +160,6 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 "-------------------------------------------------"
 "Begin to prepare the xml for test"
 
-
 # Copy certificate
 $os_on_host = $env:HostOS
 $sshDir = "$pwd" +"\BIS\$os_on_host\lisa\ssh"
@@ -202,6 +199,7 @@ if ($XmlConfigFile -and (Test-Path "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlCo
 else
 {
 	#TODO
+	return 1
 }
 
 
@@ -216,21 +214,11 @@ $remoteDir = "/usr"
 $logFile = "autobuild.log"
 if( $env:BuildWorld -eq $True )
 {
-
-# ./autobuild.sh --buildworld  --srcURL "https://svn.FreeBSD.org/base/head/" 
-# ./autobuild.sh --buildworld  --srcURL $env:SoureCodeURL 
-
-	# ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuildtest.sh" $remoteDir  "CI" " --buildworld --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
 	ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "36000"
-
 }
 elseif( $env:BuildKernel -eq $True )
 {
-# ./autobuild.sh --buildworld  --srcURL $env:SoureCodeURL 
-
-	# ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuildtest.sh" $remoteDir  "CI" " --srcURL https://svn.FreeBSD.org/base/ --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
 	ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
-
 }
 
 #Create a snapshort named "ICABase"
@@ -243,12 +231,5 @@ cd .\BIS\$os_on_host\lisa
 .\lisa run run.xml
 "Run test cases done"
 "-------------------------------------------------"
-
-
-
-
-
-
-
 
 

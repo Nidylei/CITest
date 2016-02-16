@@ -220,9 +220,9 @@ function DoStartVM([String] $vmName, [String] $server)
 ########################################################################
 #
 # SendFileToVMUntilTimeout()
-# Default time-out: 600 seconds
+# Default time-out: 180 seconds
 ########################################################################
-function SendFileToVMUntilTimeout([System.Xml.XmlElement] $vm, [string] $localFile, [string] $remoteFile, [string] $toolsParentDir, [string] $Timeout="600")
+function SendFileToVMUntilTimeout([System.Xml.XmlElement] $vm, [string] $localFile, [string] $remoteFile, [string] $toolsParentDir, [string] $Timeout="180")
 {
     LogMsg 3 "Info: Send file from $($vm.hvServer) to $($vm.vmName) in $Timeout seconds"
 
@@ -263,9 +263,9 @@ function SendFileToVMUntilTimeout([System.Xml.XmlElement] $vm, [string] $localFi
 ########################################################################
 #
 # GetFileFromVMUntilTimeout()
-# Default time-out: 600 seconds
+# Default time-out: 180 seconds
 ########################################################################
-function GetFileFromVMUntilTimeout([System.Xml.XmlElement] $vm, [string] $remoteFile, [string] $localFile,  [string] $toolsParentDir, [string] $Timeout="600")
+function GetFileFromVMUntilTimeout([System.Xml.XmlElement] $vm, [string] $remoteFile, [string] $localFile,  [string] $toolsParentDir, [string] $Timeout="180")
 {
     LogMsg 3 "Info: Get files from $($vm.vmName) to $($vm.hvServer) in $Timeout seconds"
 	

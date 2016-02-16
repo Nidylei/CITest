@@ -217,15 +217,17 @@ $remoteDir = "/usr"
 $logFile = "autobuild.log"
 if( $env:BuildWorld -eq $True )
 {
+    "Begin to build and install world&kernel and it will take a very long time ..."
 	$sts=ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "36000"
 	if($sts[-1] -ne 0)
 	{
-		"Build & install world failed"
+		"Build & install world&kernel failed"
 		return 1
 	}
 }
 elseif( $env:BuildKernel -eq $True )
 {
+    "Begin to build and install kernel and it will take a long time ..."
 	$sts=ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "3600"
 	if($sts[-1] -ne 0)
 	{

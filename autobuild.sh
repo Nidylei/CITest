@@ -6,23 +6,24 @@
 set logFile=/root/autobuild.log       
 set srcPath = /usr/devsrc
 set buildworldFlag  =  "no"     #Do not build world by default 
-set sourceCodeURL  =  "https://svn.FreeBSD.org/base/head/"
-
+set sourceCodeURL  =  "https://github.com/freebsd/freebsd.git"
+set br = "master"
 date > "/tmp/tempLogForAutoBuild.log"
 
 #Provide help information 
 if( $#argv >= 1 ) then
 	if( "$argv[1]" == "-h" || "$argv[1]" == "--help" ) then
 		echo "Usage:"
-		echo "       ./autobuild.sh [--buildworld] [--srcURL <URL>] [--log <filename>]"
+		echo "       ./autobuild.sh [--buildworld] [--srcURL <URL>] [-b <branch>] [--log <filename>]"
 		echo " "
 		echo "Parameters:"
 		echo "           --buildworld: need to build world"
 		echo "           --srcURL: source code URL"
+		echo "           -b: git branch name"
 		echo "           --log: log file name"
 		echo " "
 		echo "Example:"
-		echo "         ./autobuild.sh --srcURL https://svn.FreeBSD.org/base/head/ --log /tmp/build.log"
+		echo "         ./autobuild.sh -b dev --srcURL https://github.com/freebsd/freebsd.git --log /tmp/build.log"
 		exit 0
 	endif
 endif
@@ -50,6 +51,16 @@ while( $i <= $#argv )
         endif
     endif
 	
+	if( "$argv[$i]" == "-b" ) then
+        @ i = $i + 1
+        if( $i >  $#argv ) then
+            echo "Error: Please give a branch name" | tee -a "/tmp/tempLogForAutoBuild.log"
+            exit 1
+        else
+            set br  = $argv[$i] 
+        endif
+    endif
+	
 	if( "$argv[$i]" == "--buildworld" ) then
 	    set buildworldFlag  = "yes"
 	endif
@@ -66,24 +77,17 @@ endif
 mkdir -p $srcPath
 
 #Get the source code from the URL
+echo "The branch is: $br"   >> $logFile
 echo "The source code URL is: $sourceCodeURL"   >> $logFile
-svn checkout $sourceCodeURL  $srcPath --quiet
+git clone -b $br $sourceCodeURL $srcPath --quiet
 if( $? != 0 ) then
-	echo "Error: svn checkout $sourceCodeURL failed."  >> $logFile
+	echo "Error: git clone from $sourceCodeURL to $srcPath failed."  >> $logFile
 	exit 1
 endif 
 date >> $logFile
-echo "svn checkout $sourceCodeURL successfully."  >> $logFile
+echo "git clone from $sourceCodeURL to $srcPath successfully."  >> $logFile
 
-
-#The local working copy can be updated by running:
 cd  $srcPath
-svn update --quiet
-if( $? != 0 ) then
-	echo "Error: svn update failed."  >> $logFile
-	exit 1
-endif
-
 #Build world if necessary 
 if( $buildworldFlag == "yes" ) then
     date >> $logFile

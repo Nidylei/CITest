@@ -375,8 +375,15 @@ function CheckErrorLogInFile([string] $fileName)
 	    LogMsg 3 "Info: there is no any error in $fileName"    "Green" 
 		return 0
 	}
+	
+	$checkError = Get-Content $fileName | select-string -pattern "Failed"
+	if( $checkError -eq $null )
+	{
+	    LogMsg 3 "Info: there is no any error in $fileName"    "Green" 
+		return 0
+	}
 
-    LogMsg 0 "Info: found error in $fileName" 
+    LogMsg 0 "Info: found error/failed log in $fileName" 
 	return 1
 }
 

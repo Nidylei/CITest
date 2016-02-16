@@ -520,21 +520,6 @@ function DeleteSnapshot([String] $vmName, [String] $hvServer)
         return 1
     } 
 	
-    # If the VM is not stopped, try to stop it
-    if ($v.State -ne "Off")
-    {
-        LogMsg 3 "Info : $vmName is not in a stopped state - stopping VM"
-        Stop-VM -Name $vmName -ComputerName $hvServer -force | out-null
-
-        $v = Get-VM $vmName -ComputerName $hvServer
-        if ($v.State -ne "Off")     
-        {
-            LogMsg 0 "Error: ResetVM is unable to stop $vmName has been disabled"
-            return 1
-        }
-    }
-	
-	
 	#delete snapshot
 	LogMsg 3 "Info : $vmName to delete snapshot"
 	$sts = Remove-VMSnapshot  $vmName -ComputerName $hvServer

@@ -181,6 +181,13 @@ Copy-Item CI\tools\*   $binDir
 
 
 "The vm name is:  $env:VMName"
+#Delete the snapshort
+$sts = DeleteSnapshot $env:VMName "localhost"
+if($sts[-1] -ne 0)
+{
+	return 1
+}
+
 "Now, it begins to start the $env:VMName vm and please wait for a moment..."
 $sts = DoStartVM $env:VMName "localhost"
 if($sts[-1] -ne 0)
@@ -204,13 +211,6 @@ else
 
 "Prepare the xml for test done"
 "-------------------------------------------------"
-
-#Delete the snapshort before build world/kernel
-$sts = DeleteSnapshot $env:VMName "localhost"
-if($sts[-1] -ne 0)
-{
-	return 1
-}
 
 #Begin to build and install kernel/world if necessary
 $remoteDir = "/usr"

@@ -177,7 +177,7 @@ function DoStartVM([String] $vmName, [String] $server)
     {
 		return 0
     }
-"The stauts is $hvState "
+
     # Start the VM and wait for the Hyper-V to be running
     Start-VM $vmName -ComputerName $server | out-null
     
@@ -203,8 +203,8 @@ function DoStartVM([String] $vmName, [String] $server)
     }
     else
     {
-		Write-Output "Go to sleep 60 to wait the vm boot successfully"
-		sleep 60
+		Write-Output "Go to sleep 120 to wait the vm boot successfully"
+		sleep 120
 		Write-Output "Start vm $vmName successfully."
     }
 
@@ -226,7 +226,7 @@ function DoStopVM([String] $vmName, [String] $server)
     if ($v.State -ne "Off")
     {
         LogMsg 3 "Info : $vmName is not in a stopped state - stopping VM"
-        Stop-VM -Name $vmName -ComputerName $server -force | out-null
+        Stop-VM -Name $vmName -ComputerName $server | out-null
     }
 	
 	$timeout = 120

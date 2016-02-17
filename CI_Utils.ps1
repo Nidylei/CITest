@@ -213,6 +213,51 @@ function DoStartVM([String] $vmName, [String] $server)
 
 
 
+function DoStopVM([String] $vmName, [String] $server)
+{
+    $v = Get-VM $vmName -ComputerName $server 2>null
+	if( -not $v  )
+	{
+		Write-Error "Error: the vm $vmName doesn't exist!"
+		return 1
+	}
+	
+    # If the VM is not stopped, try to stop it
+    if ($v.State -ne "Off")
+    {
+        LogMsg 3 "Info : $vmName is not in a stopped state - stopping VM"
+        Stop-VM -Name $vmName -ComputerName $server -force | out-null
+    }
+	
+	$timeout = 120
+    while ($timeout -gt 0)
+    {
+        $v = Get-VM $vmName -ComputerName $server
+        if ($($v.State) -eq "Off")
+        {
+            break
+        }
+
+        start-sleep -seconds 1
+        $timeout -= 1
+    }
+
+    if ($timeout -eq 0)
+    {
+		Write-Error "Error:failed to stop the vm $vmName"
+		return 1
+    }
+    else
+    {
+		sleep 3
+		Write-Output "Stop vm $vmName successfully."
+    }
+
+	return 0
+}
+
+
+
 
 
 

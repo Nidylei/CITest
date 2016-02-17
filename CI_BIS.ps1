@@ -237,6 +237,12 @@ elseif( $env:BuildKernel -eq $True )
 	}
 }
 
+#To stop the vm before creating a snapshort
+$sts = DoStopVM $env:VMName "localhost"
+if($sts[-1] -ne 0)
+{
+	return 1
+}
 
 #Create a snapshort named "ICABase" before test cases
 $sts=CreateSnapshot $env:VMName "localhost"  "ICABase"

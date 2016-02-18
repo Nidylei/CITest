@@ -35,9 +35,6 @@ Function ExecuteScriptFromLocalToVmAndCheckResult ( [String]$xml,[String]$script
 	}
 	Write-Output "Log: $($vm.vmName) send $scriptFile to $($vm.vmName) successfully"
 
-	return 0 #xhx
-	
-	
 	#Send command from local host to VM 
 	#Make sure the format of script on VM is unix 
 	$fileName = [io.path]::GetFileName("$scriptFile")
@@ -143,7 +140,7 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 		{
 			$debugCycle = $xml.CreateElement("suite")
 			$name = $xml.CreateElement("suiteName")
-			$name.InnerText = "DEBUGxhx"
+			$name.InnerText = "DEBUG"
 			$name = $debugCycle.AppendChild($name)
 			$debugCycle = $xml.DocumentElement.testSuites.AppendChild($debugCycle)
 		}
@@ -246,7 +243,7 @@ elseif( $env:BuildKernel -eq $True )
 	}
 }
 
-return 0 #just for test xhx
+
 
 #To stop the vm before creating a snapshort
 $sts = DoStopVM $env:VMName "localhost"

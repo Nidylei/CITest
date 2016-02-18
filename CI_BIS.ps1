@@ -22,6 +22,9 @@ Function ExecuteScriptFromLocalToVmAndCheckResult ( [String]$xml,[String]$script
 	$xmlFilenameForVM = [xml] (Get-Content -Path  $xml)  2>null
 	$vm = $xmlFilenameForVM.config.VMs.vm
 
+	
+	WaitSSHLoginPrepare $vm.sshKey  $vm.ipv4 $toolsParentDir
+	
 	#Send the script from local to VM
 	$sts = SendFileToVMUntilTimeout  $vm $scriptFile $remoteDir $toolsParentDir 
 	if( $sts -ne 0 )
@@ -31,6 +34,9 @@ Function ExecuteScriptFromLocalToVmAndCheckResult ( [String]$xml,[String]$script
 	}
 	Write-Output "Log: $($vm.vmName) send $scriptFile to $($vm.vmName) successfully"
 
+	return 0 #xhx
+	
+	
 	#Send command from local host to VM 
 	#Make sure the format of script on VM is unix 
 	$fileName = [io.path]::GetFileName("$scriptFile")
@@ -216,10 +222,12 @@ else
 $remoteDir = "/usr"
 $logFile = "autobuild.log"
 $branch = $env:GitBranch
+$bisCodeDir = "BIS"
+$ciCodeDir = "CI"
 if( $env:BuildWorld -eq $True )
 {
     "Begin to build and install world&kernel and it will take a very long time ..."
-	$sts=ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " --buildworld  -b $branch  --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "36000"
+	$sts=ExecuteScriptFromLocalToVmAndCheckResult  ".\$bisCodeDir\$os_on_host\lisa\run.xml" ".\$ciCodeDir\autobuild.sh" $remoteDir  $ciCodeDir " --buildworld  -b $branch  --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "36000"
 	if($sts[-1] -ne 0)
 	{
 		"Build & install world&kernel failed"
@@ -229,13 +237,15 @@ if( $env:BuildWorld -eq $True )
 elseif( $env:BuildKernel -eq $True )
 {
     "Begin to build and install kernel and it will take a long time ..."
-	$sts=ExecuteScriptFromLocalToVmAndCheckResult  "$pwd\BIS\$os_on_host\lisa\run.xml" "./CI/autobuild.sh" $remoteDir  "CI" " -b $branch --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "108000"
+	$sts=ExecuteScriptFromLocalToVmAndCheckResult  ".\$bisCodeDir\$os_on_host\lisa\run.xml" ".\$ciCodeDir\autobuild.sh" $remoteDir  $ciCodeDir " -b $branch --srcURL $env:SoureCodeURL --log $remoteDir/$logFile " "$remoteDir/$logFile"  $pwd  "108000"
 	if($sts[-1] -ne 0)
 	{
 		"Build & install kernel failed"
 		return 1
 	}
 }
+
+return 0 #just for test xhx
 
 #To stop the vm before creating a snapshort
 $sts = DoStopVM $env:VMName "localhost"

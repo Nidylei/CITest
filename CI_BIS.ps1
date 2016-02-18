@@ -22,8 +22,9 @@ Function ExecuteScriptFromLocalToVmAndCheckResult ( [String]$xml,[String]$script
 	$xmlFilenameForVM = [xml] (Get-Content -Path  $xml)  2>null
 	$vm = $xmlFilenameForVM.config.VMs.vm
 
-	
-	WaitSSHLoginPrepare $vm.sshKey  $vm.ipv4 $toolsParentDir
+	cd .\$toolsParentDir
+	WaitSSHLoginPrepare $vm.sshKey  $vm.ipv4 
+	cd ..
 	
 	#Send the script from local to VM
 	$sts = SendFileToVMUntilTimeout  $vm $scriptFile $remoteDir $toolsParentDir 

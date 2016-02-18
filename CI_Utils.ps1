@@ -258,9 +258,9 @@ function DoStopVM([String] $vmName, [String] $server)
 
 
 #The first time log on to the vm through ssh
-function SSHLoginPrepare( [string] $sshKey, [string] $hostname, [String] $toolsParentDir )
+function SSHLoginPrepare( [string] $sshKey, [string] $hostname )
 {
-	echo y | .\$toolsParentDir\tools\plink -i .\$toolsParentDir\ssh\${sshKey} root@${hostname} "ll"  2> $null  | out-null
+	echo y | tools\plink -i ssh\${sshKey} root@${hostname} "ll"  2> $null  | out-null
 	if( $? -ne "True" )
 	{
 		return 1
@@ -271,13 +271,13 @@ function SSHLoginPrepare( [string] $sshKey, [string] $hostname, [String] $toolsP
 
 
 #Wait SSH log into VM at the first time until time out
-function WaitSSHLoginPrepare( [string] $sshKey, [string] $hostname, [String] $toolsParentDir )
+function WaitSSHLoginPrepare( [string] $sshKey, [string] $hostname )
 {
 	LogMsg 3 "Info: Wait SSH log into VM at the first time until time out"
 	$times = 0
 	do
 	{
-		$sts = SSHLoginPrepare  $sshKey  $hostname $toolsParentDir
+		$sts = SSHLoginPrepare  $sshKey  $hostname
 		if( $sts -eq 0 )
 		{
 			return 0

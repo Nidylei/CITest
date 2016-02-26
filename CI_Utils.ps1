@@ -203,8 +203,9 @@ function DoStartVM([String] $vmName, [String] $server)
     }
     else
     {
-		Write-Output "Go to sleep 120 to wait the vm boot successfully"
-		sleep 120
+	    #The current version of FreeBSD boot very slowly.
+		Write-Output "Go to sleep 200 to wait the vm boot successfully"
+		sleep 200
 		Write-Output "Start vm $vmName successfully."
     }
 

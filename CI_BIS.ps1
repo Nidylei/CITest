@@ -225,6 +225,11 @@ $ciCodeDir = "CI"
 $env:BuildWorld = $False
 $env:BuildKernel = $True
 
+if( $env:SoureCodeURL -eq $null -or $env:SoureCodeURL -eq "" -or $env:SoureCodeURL -eq " " )
+{
+	$env:BuildKernel = $False
+}
+
 if( $env:BuildWorld -eq $True )
 {
     "Begin to build and install world&kernel and it will take a very long time ..."

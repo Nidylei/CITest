@@ -261,7 +261,7 @@ function DoStopVM([String] $vmName, [String] $server)
 #The first time log on to the vm through ssh
 function SSHLoginPrepare( [string] $sshKey, [string] $hostname )
 {
-	echo y | tools\plink -i ssh\${sshKey} root@${hostname} "ll"  2> $null  | out-null
+	echo y | tools\plink -i ssh\${sshKey} root@${hostname} "ls"  2> $null  | out-null
 	if( $? -ne "True" )
 	{
 		return 1

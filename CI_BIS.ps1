@@ -165,7 +165,7 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 "Begin to prepare the xml for test"
 
 # Copy certificate
-$os_on_host = $env:HostOS
+$os_on_host = "WS2012R2"
 $sshDir = "$pwd" +"\BIS\$os_on_host\lisa\ssh"
 $status = Test-Path $sshDir  
 if( $status -ne "True" )
@@ -201,7 +201,7 @@ if($sts[-1] -ne 0)
 
 
 # Update config for CI Run
-$XmlConfigFile = $env:XmlConfigFile
+$XmlConfigFile = "FreeBSD_WS2012R2.xml"
 if ($XmlConfigFile -and (Test-Path "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile"))
 {
 	CIUpdateConfig "$pwd\BIS\$os_on_host\lisa\xml\freebsd\$XmlConfigFile" "$pwd\BIS\$os_on_host\lisa" run.xml 
@@ -222,6 +222,9 @@ $logFile = "autobuild.log"
 $branch = $env:GitBranch
 $bisCodeDir = "BIS"
 $ciCodeDir = "CI"
+$env:BuildWorld = $False
+$env:BuildKernel = $True
+
 if( $env:BuildWorld -eq $True )
 {
     "Begin to build and install world&kernel and it will take a very long time ..."

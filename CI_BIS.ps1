@@ -167,6 +167,8 @@ Function CIUpdateConfig([string]$originalConfigFile, [string]$CIFolder, [string]
 # Copy certificate
 $os_on_host = "WS2012R2"
 $sshDir = "$pwd" +"\BIS\$os_on_host\lisa\ssh"
+$global:testReport = "$pwd\CI\report.xml"
+$global:reportCompressFile = "$$pwd\CI\logs.zip"
 $status = Test-Path $sshDir  
 if( $status -ne "True" )
 {

@@ -225,8 +225,7 @@ $branch = $env:GitBranch
 $bisCodeDir = "BIS"
 $ciCodeDir = "CI"
 $env:BuildWorld = $False
-<# debug #>
-$env:BuildKernel = $False
+$env:BuildKernel = $True
 
 if( $env:SoureCodeURL -eq $null -or $env:SoureCodeURL -eq "" -or $env:SoureCodeURL -eq " " )
 {
